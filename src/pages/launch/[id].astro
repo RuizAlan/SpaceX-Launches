@@ -1,13 +1,13 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getLaunchById } from "../../services/spacex";
-import { getLatestLaunches } from "../../services/spacex";
+import { getLatestLaunches, getLaunchById } from "../../services/spacex";
 
 const { id } = Astro.params;
 
 let launch;
 if (id) {
   launch = await getLaunchById({ id });
+  launch.date_utc = new Date(launch.date_utc);
 }
 
 export async function getStaticPaths() {
@@ -19,7 +19,7 @@ export async function getStaticPaths() {
 }
 ---
 
-<Layout title={`Lanamiento ${id}`}>
+<Layout title={`Launch ${id}`}>
   <article class="flex gap-y-4 flex-col">
     <img
       class="w-52 h-auto"
@@ -27,7 +27,13 @@ export async function getStaticPaths() {
       alt={launch?.name}
     />
     <h2 class="text-4xl text-white font-bold">
-      Launch #{launch?.flight_number}
+      Launch #{launch?.flight_number} - {
+        launch?.date_utc.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      }
     </h2>
     <p class="text-lg text-white">{launch?.details}</p>
   </article>

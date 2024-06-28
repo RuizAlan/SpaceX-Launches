@@ -3,18 +3,30 @@ import CardLaunch from "./CardLaunch.astro";
 import { getLatestLaunches } from "../services/spacex";
 
 const launches = await getLatestLaunches();
+
+launches.forEach((launch) => {
+  launch.date_utc = new Date(launch.date_utc);
+});
 ---
 
 <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
   {
     launches.map(
-      ({ id, links, details, flight_number: flightNumber, success }) => (
+      ({
+        id,
+        links,
+        details,
+        flight_number: flightNumber,
+        success,
+        date_utc,
+      }) => (
         <CardLaunch
           id={id}
           img={links.patch.small}
           details={details}
           flightNumber={flightNumber}
           success={success}
+          date={new Date(date_utc)}
         />
       )
     )
